@@ -1,14 +1,20 @@
 import stlab
 import matplotlib.pyplot as plt
 
-def testplot(x,y):
+def testplot(x,y,scale=('','')):
+    plt.clf()
     plt.plot(x,y)
+    if scale[0]:
+        plt.yscale(scale[0])
+    if scale[1]:
+        plt.xscale(scale[1])
     plt.show()
     plt.close()
 
-def critical_currents(current,voltage):
-    iswitch = min(current[voltage>0][:len(current)//2])
-    iretrap = min(current[voltage>0][len(current)//2:])
+def critical_currents(current,voltage,thres=1e-5):
+    clist = current[voltage>thres]
+    iswitch = clist[0]
+    iretrap = clist[-1]
     return (iswitch,iretrap)
 
 '''

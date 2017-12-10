@@ -34,7 +34,8 @@ def rcsj_volt(y, t, i, Q, R1, R2):
     dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)]
     return dydt
 
-def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],saveiv=False):
+def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],saveiv=False,
+    normalized=False,full_output=False):
     current = current.tolist()      # makes it faster ?
     voltage = []
     
@@ -97,12 +98,15 @@ def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],sa
     if saveiv:
         data2save = stlab.stlabdict({'Current (Ic)': current, 'Voltage (V)': voltage})
         idstring = 'Q={:E}'.format(Q)
-        myfile = stlab.newfile('../simresults/iv',idstring,data2save.keys(),
+        myfile = stlab.newfile('../simresults/ivcs/iv',idstring,data2save.keys(),
             usedate=False,usefolder=False)
         stlab.savedict(myfile,data2save)
         myfile.close()
 
-    return (np.asarray(current),np.asarray(voltage))
+    if normalized:
+        return (np.asarray(current),np.asarray(voltage)/Q)
+    else:
+        return (np.asarray(current),np.asarray(voltage))
 
 ##################
 ##################

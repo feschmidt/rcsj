@@ -11,18 +11,16 @@ import matplotlib.pyplot as plt
 
 import stlab
 
-hbar = const.hbar
-ec = const.e
+# BROKEN from rcsj.utils.funcs import savedata
 
 ##################
 ##################
 
-def testplot(x,y):
-    plt.plot(x,y)
-    plt.show()
-    plt.close()
+
 
 def Qp(Ic,R,C):
+    hbar = const.hbar
+    ec = const.e
     return R*np.sqrt(2*ec*Ic*C/hbar)
     
 def rcsj_curr(y, t, i, Q):
@@ -36,11 +34,11 @@ def rcsj_volt(y, t, i, Q, R1, R2):
     dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)]
     return dydt
 
-def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[]):
+def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],saveiv=False):
     current = current.tolist()      # makes it faster ?
     voltage = []
-    # FFT = []
-    # FFTx = []
+    
+
     t = time
     y0 = (0,0) # always start at zero phase and zero current
     idxstart = int(-tsamp*len(t)) # only sample the last tsamp=1% of evaluated time
@@ -62,28 +60,22 @@ def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[]):
                 plt.plot(t[idxstart:],y[idxstart:,1])
                 plt.plot([t[x1+idxstart],t[x2+idxstart]],[y[x1+idxstart,1],y[x2+idxstart,1]],'o')
                 plt.ylim(0,3*Q)
-                plt.savefig('iv/test/voltage_{:.2f}_{:.2f}.png'.format(Q,i))
+                plt.savefig('iv/test/voltage_{:E}_{:E}.png'.format(Q,i))
                 plt.close()
         
-        '''
-        signal = y[:,1]
-        F = fftfreq(len(time), d=time[1]-time[0])
-        F = F[:len(F)//2]
-        
-        signal_fft = fft(y)
-        signal_fft = signal_fft[:len(signal_fft)//2]
-        FFTx.append(F)
-        FFT.append(signal_fft)
-        '''
-        
         if prefix:
+            #timedata = {'Time (wp*t)' : time, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
+            #ivdata = {'Current (Ic)': i, 'DC Voltage (V)': mean, 'Q ()': Q}
+            #idstring = 'Q={:.2f}'.format(ivdata['Q ()'])
+            #savedata((k,len(current)),prefix,idstring,timedata,ivdata)
+            
             data2save = {'Time (wp*t)' : time, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
             data2save = stlab.stlabdict(data2save)
             data2save.addparcolumn('Current (Ic)',i)
             data2save.addparcolumn('DC Voltage (V)',mean)
             data2save.addparcolumn('Q ()',Q)
             if k == 0:
-                idstring = 'Q={:.2f}'.format(Q)
+                idstring = 'Q={:E}'.format(Q)
                 myfile = stlab.newfile(prefix,idstring,data2save.keys(),
                 usedate=False,usefolder=False)#,mypath='simresults/')
             stlab.savedict(myfile,data2save)
@@ -96,11 +88,19 @@ def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[]):
             ax[0].plot(t,y[:,0])
             ax[1].plot(t,y[:,1])
             fig.subplots_adjust(hspace=0)
-            plt.savefig('iv/sols/sols_{:.2f}_{:.2f}.png'.format(Q,i))
+            plt.savefig('iv/sols/sols_{:E}_{:E}.png'.format(Q,i))
             plt.close()
             
         if printmessg:
-            print('Done: Q={:.2f}, i={:.2f}'.format(Q,i)) 
+            print('Done: Q={:E}, i={:E}'.format(Q,i)) 
+
+    if saveiv:
+        data2save = stlab.stlabdict({'Current (Ic)': current, 'Voltage (V)': voltage})
+        idstring = 'Q={:E}'.format(Q)
+        myfile = stlab.newfile('../simresults/iv',idstring,data2save.keys(),
+            usedate=False,usefolder=False)
+        stlab.savedict(myfile,data2save)
+        myfile.close()
 
     return (np.asarray(current),np.asarray(voltage))
 

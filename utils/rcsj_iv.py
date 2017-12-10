@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 
 import stlab
 
+from rcsj.utils.funcs import testplot, critical_currents, timeparams
+
 # BROKEN from rcsj.utils.funcs import savedata
 
 ##################
@@ -34,13 +36,13 @@ def rcsj_volt(y, t, i, Q, R1, R2):
     dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)]
     return dydt
 
-def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],saveiv=False,
-    normalized=False,full_output=False):
+def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
+    saveiv=False, normalized=False, full_output=False):
+    
     current = current.tolist()      # makes it faster ?
     voltage = []
     
-
-    t = time
+    t, tsamp = timeparams(Q)
     y0 = (0,0) # always start at zero phase and zero current
     idxstart = int(-tsamp*len(t)) # only sample the last tsamp=1% of evaluated time
     for k,i in enumerate(current):
@@ -65,12 +67,12 @@ def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],sa
                 plt.close()
         
         if prefix:
-            #timedata = {'Time (wp*t)' : time, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
+            #timedata = {'Time (wp*t)' : t, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
             #ivdata = {'Current (Ic)': i, 'DC Voltage (V)': mean, 'Q ()': Q}
             #idstring = 'Q={:.2f}'.format(ivdata['Q ()'])
             #savedata((k,len(current)),prefix,idstring,timedata,ivdata)
             
-            data2save = {'Time (wp*t)' : time, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
+            data2save = {'Time (wp*t)' : t, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
             data2save = stlab.stlabdict(data2save)
             data2save.addparcolumn('Current (Ic)',i)
             data2save.addparcolumn('DC Voltage (V)',mean)
@@ -115,15 +117,12 @@ def rcsj_iv(current,time,Q=4,tsamp=0.01,svpng=False,printmessg=True,prefix=[],sa
 if __name__ == '__main__':
     currents = np.arange(0.,2.01,0.01)
     all_currents = np.concatenate([currents[:-1],currents[::-1]])
-    time = np.arange(0,500,0.01)
 
     #qs = [20,10,4,3,2,1,0.1,0.05]
-    #ts = [0.1,0.1,0.1,0.1,0.1,0.1,0.8,0.8]
     qs = [10,4,1,0.1]
-    ts = [0.1,0.1,0.1,0.8]
     iv = []
     prefix = '../simresults/rcsj_time' # 1.9GB per file
-    iv = [rcsj_iv(all_currents,time,Q=qq,tsamp=tt,svpng=False,prefix=prefix) for qq,tt in zip(qs,ts)]
+    iv = [rcsj_iv(all_currents,Q=qq,svpng=False,prefix=prefix) for qq,tt in zip(qs,ts)]
 
     [plt.plot(ivv[0],ivv[1]/Q,'.-',label=str(Q)) for ivv,Q in zip(iv,qs)]
 

@@ -2,6 +2,9 @@ import stlab
 import matplotlib.pyplot as plt
 
 def testplot(x,y,scale=('','')):
+    '''
+    plots y vs x. optional scale=('xscale','yscale')
+    '''
     plt.clf()
     plt.plot(x,y)
     if scale[0]:
@@ -12,10 +15,42 @@ def testplot(x,y,scale=('','')):
     plt.close()
 
 def critical_currents(current,voltage,thres=1e-5):
+    '''
+    returns (iswitch,iretrap) for threshold <thres>
+    '''
     clist = current[voltage>thres]
     iswitch = clist[0]
     iretrap = clist[-1]
     return (iswitch,iretrap)
+
+def timeparams(Q):
+    '''
+    reasonable parameters for time and sampling, tested for 1e-2<Q<1e2
+    returns (time,ts)
+    '''
+    times = []
+    ts = []
+    for Q in qs:
+        if Q < 0.1:
+            times.append(np.arange(0,4000,0.01))
+            ts.append(0.8)
+        elif Q < 1.:
+            times.append(np.arange(0,1000,0.01))
+            ts.append(0.8)
+        elif Q < 10.:
+            times.append(np.arange(0,500,0.01))
+            ts.append(5e-2)
+        elif Q < 100.:
+            times.append(np.arange(0,400,0.01))
+            ts.append(5e-2)
+        else: # unnecessary?
+            times.append(np.arange(0,400,0.01))
+            ts.append(5e-2)
+        if Q<1e-2:
+            print('Warning: Q={:E} too low! Calculation might be inaccurate.'.format(Q))
+        if 1e2<Q:
+            print('Warning: Q={:E} too high! Calculation might take very long.'.format(Q))
+    return (time,ts)
 
 '''
 *** BROKEN

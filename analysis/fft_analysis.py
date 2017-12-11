@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import stlab
 import glob
 
-from rcsj.utils.rcsj_iv import testplot
+from rcsj.utils.funcs import testplot,peakidx
 
 
 ##################
@@ -43,6 +43,12 @@ for line in data:
     volt_fft.append(abs(signal_fft))
 freq=np.asarray(freq)
 volt_fft = np.asarray(volt_fft)
+
+
+peakfreqs = [peakidx(np.log(volt_fft[i]),thres=0.3) for i in range(len(data))]
+plt.plot(current,freq[peakfreqs])
+plt.show()
+plt.close()
 
 fig, ax = plt.subplots()    
 #ax.imshow(np.log(volt_fft),aspect='auto',cmap='magma')

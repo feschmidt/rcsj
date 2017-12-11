@@ -1,5 +1,7 @@
 import stlab
 import matplotlib.pyplot as plt
+import numpy as np
+import peakutils
 
 def testplot(x,y,scale=('','')):
     '''
@@ -22,6 +24,17 @@ def critical_currents(current,voltage,thres=1e-5):
     iswitch = clist[0]
     iretrap = clist[-1]
     return (iswitch,iretrap)
+
+
+def peakidx(y,x=(0,-1),thres=0.3):
+    '''
+    returns peak indices for FFT analysis
+    '''
+    localmax = argrelextrema(y[x[0]:x[1]], np.greater)
+    mindist = 0.9*np.squeeze(localmax)[0] # filter out peaks
+    peaks = peakutils.indexes(y,thres=thres,min_dist=mindist)
+    return peaks
+
 
 def timeparams(Q):
     '''

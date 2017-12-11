@@ -21,20 +21,18 @@ all_currents = np.concatenate([currents[:-1],currents[::-1]])
 print(all_currents)
 time = np.arange(0,500,0.01)
 
-qs = [20,3]#[10,4,1,0.1]
-ts = [0.05,0.05]#[0.1,0.1,0.1,0.8]
-iv = []
-prefix = '../simresults/rcsj_time'
-#for qq,tt in zip(qs[-2:],ts[-2:]):
-#    iv.append(rcsj_iv(all_currents,time,Q=qq,tsamp=tt,svpng=False,prefix=prefix))
-iv = [rcsj_iv(all_currents,time,Q=qq,tsamp=tt,svpng=False,prefix=prefix) for qq,tt in zip(qs,ts)]
+qs = np.logspace(-2,2,41)
 
+iv = [rcsj_iv(all_currents,Q=qq,saveiv=True) for qq in qs]
+
+
+# Plotting
 [plt.plot(ivv[0],ivv[1]/Q,'.-',label=str(Q)) for ivv,Q in zip(iv,qs)]
-
 plt.xlabel(r'$I/I_c$')
 plt.ylabel(r'$V/Q$')
 plt.legend()
-plt.savefig('ivcs_updown.png',bbox_to_inches='tight')
+plt.savefig('../plots/ivcs_updown.png',bbox_to_inches='tight')
 plt.show()
 plt.close()
+
 

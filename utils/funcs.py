@@ -41,29 +41,44 @@ def timeparams(Q):
     reasonable parameters for time and sampling, tested for 1e-2<Q<1e2
     returns (time,ts)
     '''
-    times = []
-    ts = []
-    for Q in qs:
-        if Q < 0.1:
-            times.append(np.arange(0,4000,0.01))
-            ts.append(0.8)
-        elif Q < 1.:
-            times.append(np.arange(0,1000,0.01))
-            ts.append(0.8)
-        elif Q < 10.:
-            times.append(np.arange(0,500,0.01))
-            ts.append(5e-2)
-        elif Q < 100.:
-            times.append(np.arange(0,400,0.01))
-            ts.append(5e-2)
-        else: # unnecessary?
-            times.append(np.arange(0,400,0.01))
-            ts.append(5e-2)
-        if Q<1e-2:
-            print('Warning: Q={:E} too low! Calculation might be inaccurate.'.format(Q))
-        if 1e2<Q:
-            print('Warning: Q={:E} too high! Calculation might take very long.'.format(Q))
-    return (time,ts)
+
+    if Q < 0.1:
+        times = np.arange(0,4000,0.01)
+        ts = 0.8
+    elif Q < 1.:
+        times = np.arange(0,1000,0.01)
+        ts = 0.8
+    elif Q < 10.:
+        times = np.arange(0,500,0.01)
+        ts = 5e-2
+    elif Q < 100.:
+        times = np.arange(0,400,0.01)
+        ts = 5e-2
+    else: # unnecessary?
+        times = np.arange(0,400,0.01)
+        ts = 5e-2
+    if Q<1e-2:
+        print('Warning: Q={:E} too low! Calculation might be inaccurate.'.format(Q))
+    if 1e2<Q:
+        print('Warning: Q={:E} too high! Calculation might take very long.'.format(Q))
+    return (times,ts)
+
+
+def savedata(data2save,filename,path='../simresults/'):
+    np.savetxt(path+filename,data2save)
+
+
+def savestlab(data2save,filename,path='../simresults/'):
+    '''
+    data2save = {'Time (wp*t)' : t, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
+    '''
+    data2save = stlab.stlabdict(data2save)
+    prefix = path
+    idstring = filename
+    myfile = stlab.newfile(prefix,idstring,data2save.keys(),
+    usedate=False,usefolder=False)#,mypath='simresults/')
+    stlab.savedict(myfile,data2save)
+    myfile.close()
 
 '''
 *** BROKEN

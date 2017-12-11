@@ -21,23 +21,39 @@ from rcsj.utils.funcs import testplot, critical_currents, timeparams
 
 
 def Qp(Ic,R,C):
+    '''
+    returns physical quality factor
+    '''
     hbar = const.hbar
     ec = const.e
     return R*np.sqrt(2*ec*Ic*C/hbar)
     
 def rcsj_curr(y, t, i, Q):
+    '''
+    current biased rcsj model
+    '''
     # y0 = phi, y1 = dphi/dt
     y0, y1 = y
     dydt = (y1, -1/Q*y1 - np.sin(y0) + i)
     return dydt
 
 def rcsj_volt(y, t, i, Q, R1, R2):
+    '''
+    voltage biased rcsj model
+    '''
     y0, y1 = y
     dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)]
     return dydt
 
 def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
     saveiv=False, normalized=False, full_output=False):
+    '''
+    iv sweep for rcsj model
+    returns IV curve with options:
+    - svpng: save each iteration to png
+    - saveiv: save ivc to .dat
+    - normalized: returns voltage/Q
+    '''
     
     current = current.tolist()      # makes it faster ?
     voltage = []

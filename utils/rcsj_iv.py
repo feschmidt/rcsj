@@ -11,22 +11,35 @@ import matplotlib.pyplot as plt
 
 import stlab
 
-from rcsj.utils.funcs import testplot, critical_currents, timeparams
+from rcsj.utils.funcs import *
 
 # BROKEN from rcsj.utils.funcs import savedata
 
 ##################
 ##################
 
+hbar, ec = const.hbar, const.e
 
-
-def Qp(Ic,R,C):
+def Qp(params):
     '''
     returns physical quality factor
+    params = {'R':,'Ic':,'C':}
     '''
-    hbar = const.hbar
-    ec = const.e
+    R, Ic, C = params['R'], params['Ic'], params['C']
     return R*np.sqrt(2*ec*Ic*C/hbar)
+
+def betac(params):
+    '''
+    returns Stewart-Mccumber parameter
+    '''
+    return Qp(params)**2
+    
+def omegap(params):
+    '''
+    returns plasma frequency
+    '''
+    C, Ic = params['C'], params['Ic']
+    return np.sqrt(2*ec*Ic/(hbar*C))
     
 def rcsj_curr(y, t, i, Q):
     '''
@@ -34,7 +47,7 @@ def rcsj_curr(y, t, i, Q):
     '''
     # y0 = phi, y1 = dphi/dt
     y0, y1 = y
-    dydt = (y1, -1/Q*y1 - np.sin(y0) + i)
+    dydt = (y1, (-y1 - np.sin(y0) + i)/Q)
     return dydt
 
 def rcsj_volt(y, t, i, Q, R1, R2):
@@ -42,11 +55,11 @@ def rcsj_volt(y, t, i, Q, R1, R2):
     voltage biased rcsj model
     '''
     y0, y1 = y
-    dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)]
+    dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)] # check for errors
     return dydt
 
 def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
-    saveiv=False, normalized=False, full_output=False):
+    savefile=False, saveplot=False, normalized=False, full_output=False):
     '''
     iv sweep for rcsj model
     returns IV curve with options:
@@ -64,7 +77,9 @@ def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
     for k,i in enumerate(current):
         
         y = odeint(rcsj_curr, y0, t, args=(i,Q), printmessg=printmessg)
-        y0 = y[-1,:]             # new initial condition based on last iteration
+        y0 = (0,max(y[:,1])) 
+        #y0 = y[-1,:]             # new initial condition based on last iteration
+        #print(y0)
         idx = argrelextrema(y[idxstart:,1], np.greater)
         
         if len(idx[0])<2:
@@ -76,10 +91,12 @@ def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
             voltage.append(mean)
             
             if svpng:
+                path='../plots/voltage/Q={:E}/'.format(Q)
+                ensure_dir(path)
                 plt.plot(t[idxstart:],y[idxstart:,1])
                 plt.plot([t[x1+idxstart],t[x2+idxstart]],[y[x1+idxstart,1],y[x2+idxstart,1]],'o')
                 plt.ylim(0,3*Q)
-                plt.savefig('iv/test/voltage_{:E}_{:E}.png'.format(Q,i))
+                plt.savefig(path+'i={:2.3f}.png'.format(i))
                 plt.close()
         
         if prefix:
@@ -94,7 +111,7 @@ def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
             data2save.addparcolumn('DC Voltage (V)',mean)
             data2save.addparcolumn('Q ()',Q)
             if k == 0:
-                idstring = 'Q={:E}'.format(Q)
+                idstring = 'Q={:2.2f}'.format(Q)
                 myfile = stlab.newfile(prefix,idstring,data2save.keys(),
                 usedate=False,usefolder=False)#,mypath='simresults/')
             stlab.savedict(myfile,data2save)
@@ -103,28 +120,30 @@ def rcsj_iv(current, Q=4, svpng=False, printmessg=True, prefix=[],
                 
                
         if svpng:
+            path='../plots/sols/Q={:E}/'.format(Q)
+            ensure_dir(path)
             fig, ax = plt.subplots(2,sharex=True)
             ax[0].plot(t,y[:,0])
             ax[1].plot(t,y[:,1])
             fig.subplots_adjust(hspace=0)
-            plt.savefig('iv/sols/sols_{:E}_{:E}.png'.format(Q,i))
+            plt.savefig(path+'i={:2.3f}.png'.format(i))
             plt.close()
             
         if printmessg:
-            print('Done: Q={:E}, i={:E}'.format(Q,i)) 
+            print('Done: Q={:E}, i={:2.3f}'.format(Q,i)) 
 
-    if saveiv:
-        data2save = stlab.stlabdict({'Current (Ic)': current, 'Voltage (V)': voltage})
-        idstring = 'Q={:E}'.format(Q)
-        myfile = stlab.newfile('../simresults/ivcs/iv',idstring,data2save.keys(),
-            usedate=False,usefolder=False)
-        stlab.savedict(myfile,data2save)
-        myfile.close()
+    current, voltage = np.asarray(current), np.asarray(voltage)
+    
+    if savefile:
+        saveiv(current,voltage,Q,normalized)
+        
+    if saveplot:
+        saveivplot(current,voltage,Q,normalized)
 
     if normalized:
-        return (np.asarray(current),np.asarray(voltage)/Q)
-    else:
-        return (np.asarray(current),np.asarray(voltage))
+        voltage = voltage/Q
+        
+    return (current, voltage)
 
 ##################
 ##################

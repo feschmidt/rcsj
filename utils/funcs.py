@@ -2,7 +2,13 @@ import stlab
 import matplotlib.pyplot as plt
 import numpy as np
 import peakutils
+import os
 
+def ensure_dir(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        
 def testplot(x,y,scale=('','')):
     '''
     plots y vs x. optional scale=('xscale','yscale')
@@ -43,7 +49,7 @@ def timeparams(Q):
     '''
 
     if Q < 0.1:
-        times = np.arange(0,4000,0.01)
+        times = np.arange(0,1000,0.01)
         ts = 0.8
     elif Q < 1.:
         times = np.arange(0,1000,0.01)
@@ -80,6 +86,37 @@ def savestlab(data2save,filename,path='../simresults/'):
     stlab.savedict(myfile,data2save)
     myfile.close()
 
+
+def saveivplot(current,voltage,Q,normalized=False):
+    '''
+    saves a png of the IVC, with normalized voltage (optional)
+    '''
+    plt.clf()
+    if normalized:
+        plt.plot(current,voltage/Q)
+        plt.ylabel('Voltage (Q)')
+    else:
+        plt.plot(current,voltage)
+        plt.ylabel('Voltage ()')
+    plt.xlabel('Current (Ic)')
+    plt.savefig('../plots/iv_Q={:08.4f}.png'.format(Q))
+    plt.close()
+    
+
+def saveiv(current,voltage,Q,normalized):
+    '''
+    saves a .dat file of IVC, with normalized voltage (optional)
+    '''
+    if normalized:
+        voltage = voltage/Q
+    data2save = stlab.stlabdict({'Current (Ic)': current, 'Voltage (V)': voltage})
+    data2save.addparcolumn('Q ():',Q)
+    idstring = 'Q={:08.4f}'.format(Q)
+    myfile = stlab.newfile('../simresults/ivcs/iv',idstring,data2save.keys(),
+        usedate=False,usefolder=False)
+    stlab.savedict(myfile,data2save)
+    myfile.close()    
+    
 '''
 *** BROKEN
 def savedata(k,prefix,idstring,timedata,ivdata):

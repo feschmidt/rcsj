@@ -16,14 +16,13 @@ from rcsj.utils.rcsj_iv import rcsj_iv
 ##################
 ##################
 
-currents = np.arange(0.,2.01,0.01)
+currents = np.arange(0.,1.21,0.01)
 all_currents = np.concatenate([currents[:-1],currents[::-1]])
 print(all_currents)
-time = np.arange(0,500,0.01)
 
-qs = np.logspace(-2,2,41)
+qs = [0.2,0.5,1]
 
-iv = [rcsj_iv(all_currents,Q=qq) for qq in qs]
+iv = [rcsj_iv(all_currents,Q=qq,svpng=True) for qq in qs]
 
 
 # Plotting
@@ -31,7 +30,7 @@ iv = [rcsj_iv(all_currents,Q=qq) for qq in qs]
 plt.xlabel(r'$I/I_c$')
 plt.ylabel(r'$V/Q$')
 plt.legend()
-plt.savefig('../plots/ivcs_updown.png',bbox_to_inches='tight')
+plt.savefig('../plots/single_ivcs/Q={}.png'.format(Q),bbox_to_inches='tight')
 plt.show()
 plt.close()
 

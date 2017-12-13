@@ -10,6 +10,7 @@ from scipy.fftpack import fft, fftfreq
 import matplotlib.pyplot as plt
 
 import stlab
+from collections import OrderedDict
 
 from rcsj.utils.funcs import *
 
@@ -75,13 +76,13 @@ def rcsj_volt(y, t, i, Q, R1, R2):
     dydt = [y1, -y1/Q/(1+R2/R1) - np.sin(y0) + i/(1+R2/R1)] # check for errors
     return dydt
 
-def rcsj_iv(current, damping, prefix=[],
-    svpng=False,saveplot=False,savefile=False,normalized=False,printmessg=True):
+def rcsj_iv(current, damping, prefix=[], svpng=False,svvolt=False,saveplot=False,savefile=False,normalized=False,printmessg=True):
     '''
     iv sweep for rcsj model
     - damping: tuple of either 'Q' or 'beta' and respective value
     returns IV curve with options:
     - svpng: save each iteration to png
+    - svvolt: save peak detection of voltage to png
     - saveplot: save ivc to .png
     - savefile: save ivc to .dat
     - normalized: returns voltage/Q
@@ -97,9 +98,9 @@ def rcsj_iv(current, damping, prefix=[],
     for k,i in enumerate(current):
         
         y = odeint(rcsj_curr, y0, t, args=(i,damping))
-        y0 = (0,max(y[:,1])) 
-        #y0 = y[-1,:]             # new initial condition based on last iteration
-        #print(y0)
+        #y0 = (0,max(y[:,1])) 
+        y0 = y[-1,:]             # new initial condition based on last iteration
+        
         idx = argrelextrema(y[idxstart:,1], np.greater)
         
         if len(idx[0])<2:
@@ -127,7 +128,7 @@ def rcsj_iv(current, damping, prefix=[],
             
             data2save = {'Time (wp*t)' : t, 'Phase (rad)' : y[:,0], 'AC Voltage (V)' : y[:,1]}
             data2save = stlab.stlabdict(data2save)
-            data2save.addparcolumn('Current (Ic)',i)
+            data2save.addparcolumn('Current (Ic)',i,last=False)
             data2save.addparcolumn('DC Voltage (V)',mean)
             data2save.addparcolumn('{} ()'.format(damping[0]),damping[1])
             if k == 0:
@@ -140,7 +141,7 @@ def rcsj_iv(current, damping, prefix=[],
                 myfile.close()
                 
                
-        if svpng:
+        if svvolt:
             path='../plots/sols/{}={:E}/'.format(damping[0],damping[1])
             ensure_dir(path)
             fig, ax = plt.subplots(2,sharex=True)
@@ -174,19 +175,19 @@ def rcsj_iv(current, damping, prefix=[],
 
 
 if __name__ == '__main__':
-    currents = np.arange(0.,2.01,0.01)
+    currents = np.arange(0.,2.005,0.005)
     all_currents = np.concatenate([currents[:-1],currents[::-1]])
 
-    #dampvals = [20,10,4,3,2,1,0.1,0.05]
-    dampvals = [10,4,1,0.1]
+    dampvals = [20,10,4,3,2,1,0.1,0.05]
+    #dampvals = [1,0.5,0.1]
     iv = []
-    prefix = '../simresults/rcsj_time' # 1.9GB per file
-    iv = [rcsj_iv(all_currents,damping=('Q',dd),svpng=False,prefix=prefix) for dd in dampvals]
+    prefix = '../simresults/rcsj_time/' # several GB per file
+    iv = [rcsj_iv(all_currents,damping=('Q',dd), saveplot=True,savefile=True,prefix=prefix) for dd in dampvals]
 
     [plt.plot(ivv[0],ivv[1]/dd,'.-',label=str(dd)) for ivv,dd in zip(iv,dampvals)]
 
     plt.xlabel(r'$I/I_c$')
-    plt.ylabel(r'$V/{}$'.format(damping[0]))
+    plt.ylabel(r'$V/Q$')
     plt.legend()
     plt.savefig('../plots/ivcs_updown.png',bbox_to_inches='tight')
     plt.show()

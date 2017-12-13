@@ -1,13 +1,18 @@
 import stlab
+from collections import OrderedDict
 import matplotlib.pyplot as plt
 import numpy as np
 import peakutils
 import os
+from scipy.signal import argrelextrema
+from scipy.fftpack import fft, fftfreq
+
 
 def ensure_dir(file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
         os.makedirs(directory)
+        
         
 def testplot(x,y,scale=('','')):
     '''
@@ -21,6 +26,7 @@ def testplot(x,y,scale=('','')):
         plt.xscale(scale[1])
     plt.show()
     plt.close()
+
 
 def critical_currents(current,voltage,thres=1e-5):
     '''
@@ -36,12 +42,32 @@ def peakidx(y,x=(0,-1),thres=0.3):
     '''
     returns peak indices for FFT analysis
     '''
-    localmax = argrelextrema(y[x[0]:x[1]], np.greater)
-    mindist = 0.9*np.sbetaueeze(localmax)[0] # filter out peaks
-    peaks = peakutils.indexes(y,thres=thres,min_dist=mindist)
-    return peaks
+    if np.mean(y)<-20:
+        return []
+    else:
+        localmax = argrelextrema(y[x[0]:x[1]], np.greater)[0]
+        if len(localmax) == 0:
+            return []
+        else:
+            if len(localmax) == 1:
+                mindist = 0.9*np.squeeze(localmax) # filter out peaks
+            else:
+                mindist = 0.9*np.squeeze(localmax)[0] # filter out peaks
+            peaks = peakutils.indexes(y,thres=thres,min_dist=mindist)
+            return peaks
 
-
+def findmaxfreq(peakfreqs):
+    '''
+    returns the maximum value of a list of arrays of different lengths with maximum value > 0
+    '''
+    oldmax = 0
+    for idx in peakfreqs:
+        if len(idx)>0:
+            if max(idx)>oldmax:
+                oldmax=max(idx)
+    return oldmax
+    
+    
 def timeparams(damping):
     '''
     reasonable parameters for time and sampling, tested for 1e-2<damping<1e2
@@ -49,11 +75,11 @@ def timeparams(damping):
     '''
     key, val = damping[0], damping[1]
     if val < 0.1:
-        times = np.arange(0,1000,0.01)
+        times = np.arange(0,8000,0.01)
         ts = 0.8
     elif val < 1.:
-        times = np.arange(0,1000,0.01)
-        ts = 0.2
+        times = np.arange(0,2000,0.01)
+        ts = 0.6
     elif val < 10.:
         times = np.arange(0,500,0.01)
         ts = 0.2

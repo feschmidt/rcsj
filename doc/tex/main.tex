@@ -15,6 +15,8 @@ amsmath,amssymb,aip,apl]{revtex4-1}
 \DeclareSIPostPower\tothefourth{4}
 \usepackage[english]{babel}
 \usepackage{esdiff} % for differentiation
+\usepackage{mathtools}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert} % for absolute values
 
 \begin{document}
 	\title{RCSJ model using python3}
@@ -42,8 +44,18 @@ amsmath,amssymb,aip,apl]{revtex4-1}
 	I(t) =& I_c\sin(\phi) + \frac{V}{R} + C\diff{V}{t} \\%
 	V(t) =& \frac{\hbar}{2e}\diff{\phi}{t}, \; \diff{V}{t} = \frac{\hbar}{2e} \diff[2]{\phi}{t} \\%
 	\rightarrow I(t) =& I_c\sin(\phi)+\frac{\hbar}{2eR}\diff{\phi}{t}+\frac{\hbar C}{2e}\diff[2]{\phi}{t}
+	\label{eq:ODE}
 	\end{eqnarray}
-	There are two approaches to simplifying this equation in terms of normalization.
+	Note that for this equation, the resistance in reality depends both on temperature and the voltage across the junction due to quasiparticle tunneling:
+	\begin{eqnarray}
+	R(V,T) = \begin{cases}
+	R_{sg}(T) \; &{\rm for \;} \abs{V} \leq 2\Delta(T)/e \\%
+	R_{n} \; &{\rm for \;} \abs{V} \geq 2\Delta(T)/e \\%
+	\end{cases}
+	\end{eqnarray}
+	where typically $R_{sg} \gg R_n$.
+	The characteristic voltage of the junction is accordingly defined as $V_c=I_c R_n$.
+	There are two approaches to simplifying equation \ref{eq:ODE} in terms of normalization.
 	We here call them the \textbf{Tinkham approach}\cite{tinkham} and the \textbf{Gross approach}\cite{gross}.
 	
 	
@@ -95,7 +107,7 @@ amsmath,amssymb,aip,apl]{revtex4-1}
 	\rightarrow \left[\tau\right]=\left[\omega_p t\right]=\frac{\si{\second}}{\si{\second}}=1
 	\end{eqnarray}
 	
-	\subsection{Damping}
+	\subsection{Damping and hysteresis}
 	We consider eq. \ref{eq:gross} for simplicity.
 	For \textbf{very weak damping}, i.e. $\beta_c\gg1$, the left hand side of the ODE can be set to zero.
 	The result is a linear IVC on the retrapping branch, with $I_r\leq I_c$:
@@ -110,14 +122,16 @@ amsmath,amssymb,aip,apl]{revtex4-1}
 	\diff{\phi}{\tau}=i-\sin(\phi) \rightarrow \langle V(t) \rangle=I_c R\sqrt{\left(I/I_c\right)^2-1}
 	\end{eqnarray}
 	without hysteresis.
+	See also Fig. \ref{fig:hysteresis} for the resulting simulations of the two cases.
 	
 	
 	\begin{figure}
 		\centering
-		\includegraphics[width=0.5\linewidth]{../plots/ivcs_updown}
-		\caption{Current-voltage curves for various damping cases.
-			As predicted by theory, high damping ($Q\ll1$) corresponds to a square-root like IVC with no hysteresis, while low damping ($Q\gg1$) results in strong hystersis with a almost linear retrapping branch.}
-		\label{fig:ivcsupdown}
+		\includegraphics[width=0.49\linewidth]{figs/ivcs_updown}\hfill
+		\includegraphics[width=0.49\linewidth]{figs/hysteresis_loglin}
+		\caption{(a) Current-voltage curves for various damping cases.
+			As predicted by theory, high damping ($Q\ll1$) corresponds to a square-root like IVC with no hysteresis, while low damping ($Q\gg1$) results in strong hystersis with a almost linear retrapping branch. (b) Hysteresis as a function of damping in terms of the Steeqart-McCumber parameter. For low damping, $\beta_c\gg1$, the hysteresis can be approximated by $4/(\pi Q)$.}
+		\label{fig:hysteresis}
 	\end{figure}
 	
 	\subsection{Frequency analysis}

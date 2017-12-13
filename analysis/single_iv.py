@@ -12,25 +12,28 @@ import matplotlib.pyplot as plt
 import stlab
 
 from rcsj.utils.rcsj_iv import rcsj_iv
+from rcsj.utils.funcs import ensure_dir
 
 ##################
 ##################
 
-currents = np.arange(0.,1.21,0.01)
+currents = np.arange(0.,1.101,0.001)
 all_currents = np.concatenate([currents[:-1],currents[::-1]])
 print(all_currents)
 
-qs = [0.2,0.5,1]
+betas = [1,2,3]#np.logspace(0,2,5)#[0.2,0.5,1,4]
 
-iv = [rcsj_iv(all_currents,Q=qq,svpng=True) for qq in qs]
+iv = [rcsj_iv(all_currents,beta=bb,svpng=True,printmessg=True,saveplot=True) for bb in betas]
 
 
 # Plotting
-[plt.plot(ivv[0],ivv[1]/Q,'.-',label=str(Q)) for ivv,Q in zip(iv,qs)]
+[plt.plot(ivv[0],ivv[1]/bb,'.-',label=str(bb)) for ivv,bb in zip(iv,betas)]
 plt.xlabel(r'$I/I_c$')
-plt.ylabel(r'$V/Q$')
+plt.ylabel(r'$V/\beta_c$')
 plt.legend()
-plt.savefig('../plots/single_ivcs/Q={}.png'.format(Q),bbox_to_inches='tight')
+path='../plots/single_ivcs/'
+ensuredir(path)
+plt.savefig(path+'full_updown.png',bbox_to_inches='tight')
 plt.show()
 plt.close()
 

@@ -16,11 +16,11 @@ from rcsj.utils.rcsj_iv import rcsj_iv
 
 currents = np.arange(0.,1.201,0.001)
 all_currents = np.concatenate([currents[:-1],currents[::-1]])
-qs = np.logspace(-2,2,41)
+betas = np.logspace(0,2,5)
 
 iv,iswitch,ireturn = [],[],[]
-for qq in qs:
-	data = rcsj_iv(all_currents,Q=qq,normalized=True,savefile=False,saveplot=False)
+for bb in betas:
+	data = rcsj_iv(all_currents,beta=bb,normalized=True,savefile=False,saveplot=True)
 	iv.append(data)
 	y = critical_currents(data[0],data[1])
 	iswitch.append(y[0])
@@ -28,24 +28,25 @@ for qq in qs:
 iswitch, ireturn = np.asarray(iswitch), np.asarray(ireturn)
 
 from collections import OrderedDict
-data2save = OrderedDict((key, val) for key,val in zip(['Q ()','Iswitch (Ic)','Ireturn (Ic)'],[qs,iswitch,ireturn]))
+data2save = OrderedDict((key, val) for key,val in zip(['beta ()','Iswitch (Ic)','Ireturn (Ic)'],[betas,iswitch,ireturn]))
 savestlab(data2save,'hysteresis')
 
-testplot(qs,ireturn,scale=('log','log'))
+testplot(betas,ireturn,scale=('log','log'))
 
 
-plt.plot(qs,ireturn)
-plt.xlim(1e-2,1e2)
-#plt.ylim(0,1.1)
-plt.ylim(1e-2,2)
+plt.plot(betas,ireturn)
+plt.plot(betas,4/np.pi/np.sqrt(betas),':')
+#plt.xlim(1e-2,1e2)
+plt.ylim(0,1.1)
+#plt.ylim(1e-2,2)
 plt.xscale('log')
-plt.yscale('log')
+#plt.yscale('log')
 plt.grid()
 plt.grid(b=True,which='minor',linestyle='--')
-plt.xlabel(r'$Q$')
+plt.xlabel(r'$\beta_c$')
 plt.ylabel(r'$I_r$ ($I_c$)')
-#plt.savefig('../plots/hysteresis_loglin.png')
-plt.savefig('../plots/hysteresis_loglog.png')
+plt.savefig('../plots/hysteresis_loglin.png')
+#plt.savefig('../plots/hysteresis_loglog.png')
 plt.show()
 plt.close()
 

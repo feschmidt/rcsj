@@ -1,0 +1,15 @@
+\select@language {english}
+\contentsline {title}{RCSJ model using python3}{1}{section*.2}
+\contentsline {abstract}{Abstract}{1}{section*.1}
+\tocdepth@munge 
+\contentsline {section}{\numberline {}Contents}{1}{section*.3}
+\tocdepth@restore 
+\contentsline {section}{\numberline {I}Current biasing}{1}{section*.4}
+\contentsline {subsection}{\numberline {A}Junction model and ODE}{1}{section*.5}
+\contentsline {subsubsection}{\numberline {1}Tinkham approach}{1}{section*.6}
+\contentsline {subsubsection}{\numberline {2}Gross approach}{2}{section*.7}
+\contentsline {subsection}{\numberline {B}Unit discussion}{2}{section*.8}
+\contentsline {subsection}{\numberline {C}Damping}{2}{section*.9}
+\contentsline {subsection}{\numberline {D}Frequency analysis}{3}{section*.10}
+\contentsline {section}{\numberline {II}Voltage biasing}{3}{section*.11}
+\contentsline {section}{\numberline {}References}{3}{section*.12}

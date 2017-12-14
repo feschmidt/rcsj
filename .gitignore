@@ -1,5 +1,6 @@
-plots/
-simresults/
-.ipynb_checkpoints/
-.py~
-
+*.dat
+*.png
+*.ipynb_checkpoints/
+*.py~
+*.pyc
+*.pickle

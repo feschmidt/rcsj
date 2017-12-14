@@ -136,6 +136,34 @@ amsmath,amssymb,aip,apl]{revtex4-1}
 	
 	\subsection{Frequency analysis}
 	
+	
+	\subsection{Notes on simulation}
+	Some things I noted during simulations:
+	\begin{itemize}
+		\item The initial conditions for each iteration are extremely important!
+		\begin{itemize}
+			\item Currently (\today), after letting the system evolve for a certain number of time steps (adjusted for each Q), the voltage is calculated by averaging over the last cycle.
+			If there is no voltage cycle the voltage gets set to zero.
+			The initial condition of the next run is the final state of the system from the previous run.
+			\item Another option would be to set the maximum phase change of the previous run as initial condition.
+			If we do this, the system jumps to the normal branch much earlier than at $i=1$.
+			In frequency space, this leads to fancy wave patterns.
+			\item Probably the most correct approach would be to set the maximum phase change of the last cycle as initial condition.
+			Or should it be the minimum?
+			Does this have influence on ramping speed as well?
+		\end{itemize}
+		
+		\item $Q$ versus $\beta_c$
+		\begin{itemize}
+			\item The package is now optimized for the use of $Q$ for damping.
+			Using $\beta_c$ is finally also implemented, but not yet tested. \textbf{TODO!!}
+		\end{itemize}
+		\item Subgap resistance
+		\begin{itemize}
+			\item \textbf{TODO!!}
+		\end{itemize}
+	\end{itemize}
+	
 	\section{Voltage biasing}
 	The system equation only slightly changes.
 	What remains to be seen is the normalization and the exact values needed to achieve voltage biasing.

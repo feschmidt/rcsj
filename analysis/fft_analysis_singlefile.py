@@ -9,7 +9,7 @@ import stlab
 import glob
 
 from rcsj.utils.funcs import *
-
+import pickle
 
 ##################
 ##################
@@ -17,7 +17,7 @@ from rcsj.utils.funcs import *
 pathlist = glob.glob('../simresults/rcsj_time/*')
 pathlist.sort()
 print(pathlist)
-mm = -1
+mm = 3
 filetoopen = pathlist[mm]
 print(filetoopen)
 data = stlab.readdata.readdat(filetoopen)
@@ -71,27 +71,40 @@ ax.set_xticks(np.arange(0,len(data),100))
 ax.set_xticklabels(current[0::100])
 plt.xlabel(r'Current ($I_c$)')
 plt.ylabel(r'Frequency')
-plt.savefig('../plots/fft_Q={}.png'.format(Q))
+plt.savefig('../plots/fft/Q={}.png'.format(Q))
 plt.show()
 plt.close()
 ###
 
 
 datasize = volt_fft.shape
+clim = (0,3*Q)
+if Q<1:
+    clim=(0,100*Q)
+if 1<Q<5:
+    clim=(0,50*Q)
+elif 5<Q:
+    clim=(0,0.5*Q)
 
 fig, ax = plt.subplots()
 extent=(freq[0],freq[-1],0,len(data))
-ax.imshow(volt_fft,extent=extent,aspect='auto',cmap='inferno_r',clim=(0,3*Q))
+ax.imshow(volt_fft,extent=extent,aspect='auto',cmap='inferno_r',clim=clim)
 ax.set_xlim(0,2*Q)
 ax.set_yticks(np.arange(0,len(data),100))
 ax.set_yticklabels(current[0::100])
+plt.title(r'Q={}'.format(Q))
 plt.xlabel(r'Frequency')
 plt.ylabel(r'Current ($I_c$)')
-plt.savefig('../plots/2d_fft_Q={}.png'.format(Q))
+pickle.dump(ax, open('../plots/fft/2d_fft_Q={}.pickle'.format(Q),'wb'))
+plt.savefig('../plots/fft/2d_fft_Q={}.png'.format(Q))
 plt.show()
 plt.close()
 
 ############
-
+'''
+to load pickle:
+loadax = pickle.load(open('../plots/fft/2d_fft_Q={}.pickle'.format(Q),'rb'))
+plt.show()
+'''
 
 

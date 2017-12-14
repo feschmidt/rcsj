@@ -6,12 +6,19 @@ import peakutils
 import os
 from scipy.signal import argrelextrema
 from scipy.fftpack import fft, fftfreq
+import pickle
 
 
 def ensure_dir(file_path):
+    '''
+    Checks if directory exists. If not, it creates a new one.
+    '''
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
+        print(directory+' does not exist yet. Creating the directory now.')
         os.makedirs(directory)
+    else:
+        print(directory+' already exists. Continuing')
         
         
 def testplot(x,y,scale=('','')):
@@ -38,6 +45,19 @@ def critical_currents(current,voltage,thres=1e-5):
     return (iswitch,iretrap)
 
 
+def analyze_fft(time,voltage):
+    '''
+    returns the FFT of the voltage input
+    '''
+    F = fftfreq(len(time), d=time[1]-time[0])
+    F = F[:len(F)//2]
+
+    signal_fft = fft(voltage)
+    signal_fft = signal_fft[:len(signal_fft)//2]
+    
+    return (F, signal_fft)
+
+
 def peakidx(y,x=(0,-1),thres=0.3):
     '''
     returns peak indices for FFT analysis
@@ -55,6 +75,7 @@ def peakidx(y,x=(0,-1),thres=0.3):
                 mindist = 0.9*np.squeeze(localmax)[0] # filter out peaks
             peaks = peakutils.indexes(y,thres=thres,min_dist=mindist)
             return peaks
+
 
 def findmaxfreq(peakfreqs):
     '''
@@ -153,3 +174,15 @@ def saveiv(current,voltage,damping,normalized):
     myfile.close()    
     
 
+def savepickle(data,filepath):
+    '''
+    saves data to pickle
+    '''
+    pickle.dump(data, open(filepath,'wb'))
+    
+
+def loadpickle(filepath):
+    '''
+    loads data from pickle
+    '''
+    return pickle.load(open(filepath,'rb'))

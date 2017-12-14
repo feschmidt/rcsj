@@ -9,7 +9,7 @@ import stlab
 import glob
 
 from rcsj.utils.funcs import *
-
+import pickle
 
 ##################
 ##################
@@ -17,8 +17,9 @@ from rcsj.utils.funcs import *
 pathlist = glob.glob('../simresults/rcsj_time/*')
 pathlist.sort()
 print(pathlist)
-for mm in range(1,len(pathlist)):
+for mm in range(2,len(pathlist)):
     filetoopen = pathlist[mm]
+    print('\nloading:\n')
     print(filetoopen)
     data = stlab.readdata.readdat(filetoopen)
     #data = [stlab.readdata.readdat(path) for path in pathlist]
@@ -65,33 +66,45 @@ for mm in range(1,len(pathlist)):
 
     fig, ax = plt.subplots()
     for xx,yy in zip(newi,newpeaks):
-        plt.plot(xx,freq[yy],'k.')
-    ax.set_ylim(0,3*Q)
+        plt.plot(xx,freq[yy]/Q,'k.')
+    ax.set_ylim(0,3)
     ax.set_xticks(np.arange(0,len(data),100))
     ax.set_xticklabels(current[0::100])
+    plt.title(r'Q={}'.format(Q))
     plt.xlabel(r'Current ($I_c$)')
-    plt.ylabel(r'Frequency')
-    plt.savefig('../plots/fft_Q={}.png'.format(Q))
+    plt.ylabel(r'Frequency (Q)')
+    #plt.savefig('../plots/fft/Q={}.png'.format(Q))
     plt.show()
     plt.close()
     ###
 
 
     datasize = volt_fft.shape
+    clim = (0,3*Q)
+    if Q<=1:
+        clim=(0,50*Q)
+    if 1<Q<5:
+        clim=(0,20*Q)
+    elif 5<Q:
+        clim=(0,0.5*Q)
 
     fig, ax = plt.subplots()
-    extent=(freq[0],freq[-1],0,len(data))
-    ax.imshow(volt_fft,extent=extent,aspect='auto',cmap='inferno_r',clim=(0,3*Q))
-    ax.set_xlim(0,2*Q)
+    extent=(freq[0]/Q,freq[-1]/Q,0,len(data))
+    ax.imshow(volt_fft,extent=extent,aspect='auto',cmap='inferno_r',clim=clim)
+    ax.set_xlim(0,2)
     ax.set_yticks(np.arange(0,len(data),100))
     ax.set_yticklabels(current[0::100])
-    plt.xlabel(r'Frequency')
+    plt.title(r'Q={}'.format(Q))
+    plt.xlabel(r'Frequency (Q)')
     plt.ylabel(r'Current ($I_c$)')
-    plt.savefig('../plots/2d_fft_Q={}.png'.format(Q))
+    #pickle.dump(ax, open('../plots/fft/2d_fft_Q={}.pickle'.format(Q),'wb'))
+    #plt.savefig('../plots/fft/2d_fft_Q={}.png'.format(Q))
     plt.show()
     plt.close()
 
-############
-
-
-
+    ############
+    '''
+    to load pickle:
+    loadax = pickle.load(open('../plots/fft/2d_fft_Q={}.pickle'.format(Q),'rb'))
+    plt.show()
+    '''

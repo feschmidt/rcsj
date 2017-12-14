@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.12.11)  13 DEC 2017 16:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.12.11)  13 DEC 2017 18:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -936,45 +936,47 @@ LaTeX Font Warning: Font shape `OT1/cmss/bx/it' undefined
 (Font)              using `OT1/cmss/bx/n' instead on input line 62.
 
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
-<figs/ivcs_updown.png, id=109, 462.528pt x 346.896pt>
+<figs/ivcs_updown.png, id=114, 462.528pt x 346.896pt>
 File: figs/ivcs_updown.png Graphic file (type png)
 
 <use figs/ivcs_updown.png>
 Package pdftex.def Info: figs/ivcs_updown.png used on input line 130.
 (pdftex.def)             Requested size: 249.9028pt x 187.42691pt.
 
-<figs/hysteresis_loglin.png, id=111, 462.528pt x 346.896pt>
+<figs/hysteresis_loglin.png, id=116, 462.528pt x 346.896pt>
 File: figs/hysteresis_loglin.png Graphic file (type png)
 
 <use figs/hysteresis_loglin.png>
 Package pdftex.def Info: figs/hysteresis_loglin.png used on input line 131.
 (pdftex.def)             Requested size: 249.9028pt x 187.42691pt.
- (./main.bbl [3 <./figs/ivcs_updown.png> <./figs/hysteresis_loglin.png>]) [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 145.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 143.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 143.
+ [3 <./figs/ivcs_updown.png> <./figs/hysteresis_loglin.png>] (./main.bbl) [4]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 173.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 145.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 145.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 173.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 173.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 9AF0B752E5DD9C6BF196DDF45EC1512E;802.
 
-
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: 55EC5295EEF771462872EDCDB9266B9E;720
-(rerunfilecheck)             After:  2A33349CFABD1E3F940A98194B53952D;735.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 20053 strings out of 494953
- 379396 string characters out of 6180976
+ 20073 strings out of 494953
+ 379722 string characters out of 6180976
  474355 words of memory out of 5000000
- 23091 multiletter control sequences out of 15000+600000
+ 23107 multiletter control sequences out of 15000+600000
  20219 words of font info for 76 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 40i,19n,44p,10364b,915s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 40i,19n,44p,10364b,865s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/share/
@@ -1001,10 +1003,10 @@ i9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/s
 hare/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm5.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on main.pdf (4 pages, 329341 bytes).
+Output written on main.pdf (4 pages, 332142 bytes).
 PDF statistics:
- 234 PDF objects out of 1000 (max. 8388607)
- 193 compressed objects within 2 object streams
- 31 named destinations out of 1000 (max. 500000)
- 107 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 239 PDF objects out of 1000 (max. 8388607)
+ 198 compressed objects within 2 object streams
+ 32 named destinations out of 1000 (max. 500000)
+ 115 words of extra memory for PDF output out of 10000 (max. 10000000)
 

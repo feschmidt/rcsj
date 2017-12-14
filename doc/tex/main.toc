@@ -11,5 +11,6 @@
 \contentsline {subsection}{\numberline {B}Unit discussion}{2}{section*.8}
 \contentsline {subsection}{\numberline {C}Damping and hysteresis}{3}{section*.9}
 \contentsline {subsection}{\numberline {D}Frequency analysis}{3}{section*.10}
-\contentsline {section}{\numberline {II}Voltage biasing}{3}{section*.11}
-\contentsline {section}{\numberline {}References}{4}{section*.12}
+\contentsline {subsection}{\numberline {E}Notes on simulation}{3}{section*.11}
+\contentsline {section}{\numberline {II}Voltage biasing}{4}{section*.12}
+\contentsline {section}{\numberline {}References}{4}{section*.13}
